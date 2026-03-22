@@ -24,9 +24,6 @@ public class TenantConfig {
     private String issuerUri;
 
     @Column(nullable = false)
-    private String introspectionUri;
-
-    @Column(nullable = false)
     private String externalClientId;
 
     @Column(nullable = false)
