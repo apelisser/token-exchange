@@ -20,6 +20,32 @@ public class KeycloakClient {
 
     private final RestClient restClient;
 
+    public boolean introspectToken(String token, TenantConfig tenant) {
+        try {
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("token", token);
+            body.add("client_id", tenant.getExternalClientId());
+            body.add("client_secret", tenant.getExternalClientSecret());
+
+            Map<?, ?> response = restClient.post()
+                .uri(tenant.getIntrospectionUri())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .retrieve()
+                .body(Map.class);
+
+            boolean active = Boolean.TRUE.equals(
+                response != null ? response.get("active") : false
+            );
+            log.info("Introspection for tenant={} active={}", tenant.getTenantName(), active);
+            return active;
+
+        } catch (Exception e) {
+            log.error("Introspection failed for tenant={}", tenant.getTenantName(), e);
+            return false;
+        }
+    }
+
     public String getInternalToken(TenantConfig tenant) {
         try {
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();

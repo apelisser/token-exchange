@@ -2,6 +2,7 @@ package com.apelisser.tokenexchange.controller;
 
 import com.apelisser.tokenexchange.exception.TokenExchangeException;
 import com.apelisser.tokenexchange.service.TokenExchangeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,19 @@ public class TokenExchangeController {
     private final TokenExchangeService tokenExchangeService;
 
     @PostMapping
-    public ResponseEntity<?> exchange(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> exchange(
+        @AuthenticationPrincipal Jwt jwt,
+        HttpServletRequest request) {
         try {
-            String tokenB = tokenExchangeService.exchange(jwt);
+            // extrai o raw token para introspection quando necessário
+            String rawToken = extractRawToken(request);
+            String tokenB = tokenExchangeService.exchange(jwt, rawToken);
+
             return ResponseEntity.ok(Map.of(
                 "access_token", tokenB,
                 "token_type", "Bearer"
             ));
+
         } catch (TokenExchangeException e) {
             log.warn("Token exchange failed: {}", e.getMessage());
             return ResponseEntity.status(e.getStatus())
@@ -40,5 +47,17 @@ public class TokenExchangeController {
                 .body(Map.of("error", "server_error",
                     "error_description", e.getMessage()));
         }
+    }
+
+    private String extractRawToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        throw new TokenExchangeException(
+            org.springframework.http.HttpStatus.UNAUTHORIZED,
+            "invalid_request",
+            "Missing Authorization header"
+        );
     }
 }

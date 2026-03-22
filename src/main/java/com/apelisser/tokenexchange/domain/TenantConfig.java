@@ -24,6 +24,9 @@ public class TenantConfig {
     private String issuerUri;
 
     @Column(nullable = false)
+    private String introspectionUri;
+
+    @Column(nullable = false)
     private String externalClientId;
 
     @Column(nullable = false)
@@ -37,5 +40,11 @@ public class TenantConfig {
 
     @Column(nullable = false)
     private String internalClientSecret;
+
+    @Column
+    private String jwksUri;
+
+    @Column(nullable = false)
+    private Long maxTokenLifetimeMinutes;
 
 }
