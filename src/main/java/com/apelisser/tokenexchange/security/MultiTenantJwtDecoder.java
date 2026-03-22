@@ -22,41 +22,37 @@ public class MultiTenantJwtDecoder implements JwtDecoder {
 
     private final TenantConfigRepository tenantConfigRepository;
 
-    // cache dos decoders por issuer - evita recriar a cada request
+    // cache of decoders by issuer - avoid recreating at each request
     private final Map<String, JwtDecoder> decoderCache = new ConcurrentHashMap<>();
 
     @Override
     public Jwt decode(String token) throws JwtException {
 
-        // 1. Extrai o issuer do token sem validar ainda
+        // 1. Extract the issuer from the token without validating yet
         String issuer = extractIssuerUnchecked(token);
         log.debug("Decoding token for issuer={}", issuer);
 
-        // 2. Busca o tenant pelo issuer
+        // 2. Look up the tenant by issuer
         TenantConfig tenant = tenantConfigRepository.findByIssuerUri(issuer)
             .orElseThrow(() -> new JwtException("Unknown issuer: " + issuer));
 
-        // 3. Obtém ou cria o decoder para esse tenant
+        // 3. Obtain or create the decoder for this tenant
         JwtDecoder decoder = decoderCache.computeIfAbsent(
             issuer,
             iss -> buildDecoder(tenant)
         );
 
-        // 4. Valida o token com o JWKS do KC-01 desse tenant
+        // 4. Validate the token with the JWKS of KC-01 for that tenant
         return decoder.decode(token);
     }
 
     private JwtDecoder buildDecoder(TenantConfig tenant) {
-//        String jwksUri = tenant.getIssuerUri() + "/protocol/openid-connect/certs";
-//        log.info("Building JwtDecoder for tenant={} jwksUri={}", tenant.getTenantName(), jwksUri);
-//        return NimbusJwtDecoder.withJwkSetUri(jwksUri).build();
-
         if (tenant.getJwksUri() != null && !tenant.getJwksUri().isBlank()) {
-            // usa a URL explícita cadastrada
+            // use the explicit URL registered
             log.info("Building JwtDecoder for tenant={} jwksUri={}", tenant.getTenantName(), tenant.getJwksUri());
             return NimbusJwtDecoder.withJwkSetUri(tenant.getJwksUri()).build();
         }
-        // fallback: tenta via discovery
+        // fallback: try via discovery
         log.info("Building JwtDecoder for tenant={} via discovery issuer={}", tenant.getTenantName(), tenant.getIssuerUri());
         return JwtDecoders.fromIssuerLocation(tenant.getIssuerUri());
     }

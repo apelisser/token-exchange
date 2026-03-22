@@ -26,7 +26,7 @@ public class TokenExchangeService {
         String username = jwt.getClaimAsString("preferred_username");
         log.info("Token exchange for issuer={} user={}", issuer, username);
 
-        // 1. Busca tenant pelo issuer
+        // 1. Find tenant by issuer
         TenantConfig tenant = tenantConfigRepository.findByIssuerUri(issuer)
             .orElseThrow(() -> new TokenExchangeException(
                 HttpStatus.UNAUTHORIZED,
@@ -34,7 +34,7 @@ public class TokenExchangeService {
                 "No tenant configured for issuer: " + issuer
             ));
 
-        // 2. Verifica se precisa de introspection
+        // 2. Check if introspection is required
         if (requiresIntrospection(jwt, tenant)) {
             log.info("Token lifetime exceeds threshold - performing introspection for tenant={}",
                 tenant.getTenantName());
@@ -51,7 +51,7 @@ public class TokenExchangeService {
                 tenant.getTenantName());
         }
 
-        // 3. Obtém Token B do KC interno
+        // 3. Get Token B from internal KC
         return keycloakClient.getInternalToken(tenant);
     }
 
@@ -60,7 +60,7 @@ public class TokenExchangeService {
         Instant expiresAt = jwt.getExpiresAt();
 
         if (issuedAt == null || expiresAt == null) {
-            // sem informação de tempo - faz introspection por segurança
+            // no time information - perform introspection for security
             return true;
         }
 

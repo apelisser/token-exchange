@@ -25,7 +25,7 @@ public class TokenExchangeController {
         @AuthenticationPrincipal Jwt jwt,
         HttpServletRequest request) {
         try {
-            // extrai o raw token para introspection quando necessário
+            // extract raw token for introspection when necessary
             String rawToken = extractRawToken(request);
             String tokenB = tokenExchangeService.exchange(jwt, rawToken);
 
