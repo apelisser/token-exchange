@@ -3,7 +3,14 @@
 > **Prerequisites:**
 > - Docker and Docker Compose installed
 > - `curl` and `jq` installed
+> - `git` installed (used to locate the project root)
 > - Entry `127.0.0.1 host.docker.internal` added to `/etc/hosts`
+
+**Add `host.docker.internal` to `/etc/hosts` (if not already present)**
+
+```bash
+echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
+```
 
 **Ensure you are at the project root before running any command:**
 

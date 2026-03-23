@@ -35,7 +35,6 @@ This directory contains everything needed to set up and run the token exchange P
 
 **Additional requirements:**
 - `lsof` installed (used to detect port conflicts)
-- `git` installed (used to locate the project root)
 
 **What it does, step by step:**
 
@@ -69,6 +68,7 @@ chmod +x build.sh
 **Best for:** understanding each configuration step visually, or when you prefer to work through the Keycloak Admin Console.
 
 **Additional requirements:**
+- `git` installed (used to locate the project root)
 - A browser
 
 **What it covers:**
@@ -104,6 +104,7 @@ docker compose -f docs/docker-compose.yml --profile service up -d --build token-
 
 **Additional requirements:**
 - `curl` and `jq` installed
+- `git` installed (used to locate the project root)
 
 **What it covers:**
 

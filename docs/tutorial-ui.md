@@ -2,8 +2,21 @@
 
 > **Prerequisites:**
 > - Docker and Docker Compose installed
-> - Entry `127.0.0.1 host.docker.internal` added to `/etc/hosts`
 > - `curl` and `jq` installed (for the token exchange test)
+> - `git` installed (used to locate the project root)
+> - Entry `127.0.0.1 host.docker.internal` added to `/etc/hosts`
+
+**Add `host.docker.internal` to `/etc/hosts` (if not already present)**
+
+```bash
+echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts
+```
+
+**Ensure you are at the project root before running any command:**
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+```
 
 **Start the Keycloaks before proceeding:**
 
