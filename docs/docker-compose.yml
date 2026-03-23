@@ -1,0 +1,49 @@
+name: keycloak-token-exchange
+
+services:
+
+  keycloak-01:
+    image: quay.io/keycloak/keycloak:26.5.6
+    container_name: keycloak-01
+    hostname: keycloak-01
+    command: start-dev --hostname=http://host.docker.internal:8081 --hostname-strict=false
+    ports:
+      - "8081:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  keycloak-02:
+    image: quay.io/keycloak/keycloak:26.5.6
+    container_name: keycloak-02
+    hostname: keycloak-02
+    command: start-dev --hostname-strict=false
+    ports:
+      - "8082:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  token-exchange-service:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: token-exchange-service:local
+    container_name: token-exchange-service
+    ports:
+      - "8090:8090"
+    volumes:
+      - ../src/main/resources/data.sql:/app/config/data.sql:ro
+    environment:
+      SPRING_SQL_INIT_DATA_LOCATIONS: file:/app/config/data.sql
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - keycloak-01
+      - keycloak-02
+    profiles:
+      - service
