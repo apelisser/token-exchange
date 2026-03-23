@@ -1,4 +1,4 @@
-package com.apelisser.tokenexchange.exception;
+package com.apelisser.tokenexchange.domain;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

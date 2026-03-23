@@ -1,6 +1,5 @@
-package com.apelisser.tokenexchange.repository;
+package com.apelisser.tokenexchange.domain;
 
-import com.apelisser.tokenexchange.domain.TenantConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

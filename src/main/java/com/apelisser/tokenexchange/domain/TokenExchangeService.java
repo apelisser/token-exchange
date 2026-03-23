@@ -1,9 +1,7 @@
-package com.apelisser.tokenexchange.service;
+package com.apelisser.tokenexchange.domain;
 
-import com.apelisser.tokenexchange.client.KeycloakClient;
-import com.apelisser.tokenexchange.domain.TenantConfig;
-import com.apelisser.tokenexchange.exception.TokenExchangeException;
-import com.apelisser.tokenexchange.repository.TenantConfigRepository;
+import com.apelisser.tokenexchange.infrastructure.idp.TokenIntrospectionClient;
+import com.apelisser.tokenexchange.infrastructure.idp.TokenIssuerClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,7 +16,8 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class TokenExchangeService {
 
-    private final KeycloakClient keycloakClient;
+    private final TokenIntrospectionClient tokenIntrospectionClient;
+    private final TokenIssuerClient tokenIssuerClient;
     private final TenantConfigRepository tenantConfigRepository;
 
     public String exchange(Jwt jwt, String rawToken) {
@@ -38,7 +37,7 @@ public class TokenExchangeService {
         if (requiresIntrospection(jwt, tenant)) {
             log.info("Token lifetime exceeds threshold - performing introspection for tenant={}",
                 tenant.getTenantName());
-            boolean active = keycloakClient.introspectToken(rawToken, tenant);
+            boolean active = tokenIntrospectionClient.introspectToken(rawToken, tenant);
             if (!active) {
                 throw new TokenExchangeException(
                     HttpStatus.UNAUTHORIZED,
@@ -52,7 +51,7 @@ public class TokenExchangeService {
         }
 
         // 3. Get Token B from internal KC
-        return keycloakClient.getInternalToken(tenant);
+        return tokenIssuerClient.getInternalToken(tenant);
     }
 
     private boolean requiresIntrospection(Jwt jwt, TenantConfig tenant) {

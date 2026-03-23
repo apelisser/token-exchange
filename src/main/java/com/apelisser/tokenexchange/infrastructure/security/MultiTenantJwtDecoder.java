@@ -1,7 +1,7 @@
-package com.apelisser.tokenexchange.security;
+package com.apelisser.tokenexchange.infrastructure.security;
 
 import com.apelisser.tokenexchange.domain.TenantConfig;
-import com.apelisser.tokenexchange.repository.TenantConfigRepository;
+import com.apelisser.tokenexchange.domain.TenantConfigRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;

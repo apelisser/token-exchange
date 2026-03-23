@@ -1,6 +1,6 @@
-package com.apelisser.tokenexchange.config;
+package com.apelisser.tokenexchange.infrastructure.config;
 
-import com.apelisser.tokenexchange.security.MultiTenantJwtDecoder;
+import com.apelisser.tokenexchange.infrastructure.security.MultiTenantJwtDecoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +24,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

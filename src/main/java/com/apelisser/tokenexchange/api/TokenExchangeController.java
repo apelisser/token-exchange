@@ -1,7 +1,7 @@
-package com.apelisser.tokenexchange.controller;
+package com.apelisser.tokenexchange.api;
 
-import com.apelisser.tokenexchange.exception.TokenExchangeException;
-import com.apelisser.tokenexchange.service.TokenExchangeService;
+import com.apelisser.tokenexchange.domain.TokenExchangeException;
+import com.apelisser.tokenexchange.domain.TokenExchangeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

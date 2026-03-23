@@ -1,4 +1,4 @@
-package com.apelisser.tokenexchange.config;
+package com.apelisser.tokenexchange.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

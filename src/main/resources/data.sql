@@ -1,5 +1,4 @@
 INSERT INTO tenant_config (
-    id,
     tenant_name,
     issuer_uri,
     introspection_uri,
@@ -11,15 +10,14 @@ INSERT INTO tenant_config (
     jwks_uri,
     max_token_lifetime_minutes
 ) VALUES (
-    1,
-    'mock-tenant',
-    'http://192.168.1.250:18081/realms/poc-realm',
-    'http://192.168.1.250:18081/realms/poc-realm/protocol/openid-connect/token/introspect',
+    'poc-tenant',
+    'http://host.docker.internal:8081/realms/poc-realm',
+    'http://host.docker.internal:8081/realms/poc-realm/protocol/openid-connect/token/introspect',
     'kc-b-broker',
-    'ThaQTvXSm3tRLwnlmuxx0jT4tNGrHhrI',
-    'http://localhost:8082/realms/my-realm/protocol/openid-connect/token',
+    'kloXybz2j6ftFFoAeOEd6NwPfPr0oupQ',
+    'http://host.docker.internal:8082/realms/my-realm/protocol/openid-connect/token',
     'my-client',
-    'CbaEMRYUwWh7CXKfkfNvuxdunBWqhR00',
-    'http://192.168.1.250:18081/realms/poc-realm/protocol/openid-connect/certs',
+    '3MtIVPE3PdRFCJ8v13nOy9rRGDyhimcL',
+    'http://host.docker.internal:8081/realms/poc-realm/protocol/openid-connect/certs',
     15
 );
