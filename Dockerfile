@@ -23,4 +23,4 @@ USER appuser
 
 EXPOSE 8090
 
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.additional-location=optional:file:/app/config/"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
