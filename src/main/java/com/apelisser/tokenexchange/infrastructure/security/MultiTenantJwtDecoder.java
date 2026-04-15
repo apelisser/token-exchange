@@ -4,10 +4,12 @@ import com.apelisser.tokenexchange.domain.TenantConfig;
 import com.apelisser.tokenexchange.domain.TenantConfigRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Component;
 
@@ -50,8 +52,14 @@ public class MultiTenantJwtDecoder implements JwtDecoder {
         if (tenant.getJwksUri() != null && !tenant.getJwksUri().isBlank()) {
             // use the explicit URL registered
             log.info("Building JwtDecoder for tenant={} jwksUri={}", tenant.getTenantName(), tenant.getJwksUri());
-            return NimbusJwtDecoder.withJwkSetUri(tenant.getJwksUri()).build();
+            NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri(tenant.getJwksUri()).build();
+
+            // set the validator to ensure issuer and other claims are validated
+            OAuth2TokenValidator<Jwt> jwtValidator = JwtValidators.createDefaultWithIssuer(tenant.getIssuerUri());
+            jwtDecoder.setJwtValidator(jwtValidator);
+            return jwtDecoder;
         }
+
         // fallback: try via discovery
         log.info("Building JwtDecoder for tenant={} via discovery issuer={}", tenant.getTenantName(), tenant.getIssuerUri());
         return JwtDecoders.fromIssuerLocation(tenant.getIssuerUri());
